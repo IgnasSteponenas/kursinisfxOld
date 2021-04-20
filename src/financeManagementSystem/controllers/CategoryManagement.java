@@ -73,27 +73,29 @@ public class CategoryManagement {
         if (LoginPage.getIsItIndividual()) {
             if (UserDataBaseManagement.getResponsibleCategories(LoginPage.getIndividual().getId()) != null) {
                 responsible = UserDataBaseManagement.getResponsibleCategories(LoginPage.getIndividual().getId()).split(":");
-                for (Category cat : category) {
-                    for (String res : responsible) {
-                        if (cat.getCatId() == Integer.parseInt(res)) {
-                            filteredCats.add(cat);
-                            //break;
-                        }
-                    }
-                }
+                filteredCats = filterCats(category, responsible);
             }
         } else if (UserDataBaseManagement.getResponsibleCategories(LoginPage.getCompany().getId()) != null) {
             responsible = UserDataBaseManagement.getResponsibleCategories(LoginPage.getCompany().getId()).split(":");
-            for (Category cat : category) {
-                for (String res : responsible) {
-                    if (cat.getCatId() == Integer.parseInt(res)) {
-                        filteredCats.add(cat);
-                        //break;
-                    }
+            filteredCats = filterCats(category, responsible);
+        }
+
+        fillBoxWithCats(filteredCats);
+    }
+
+    private ArrayList<Category> filterCats(ArrayList<Category> category, String[] responsible){
+        ArrayList<Category> filteredCats = new ArrayList<Category>();
+        for (Category cat : category) {
+            for (String res : responsible) {
+                if (cat.getCatId() == Integer.parseInt(res)) {
+                    filteredCats.add(cat);
                 }
             }
         }
+        return filteredCats;
+    }
 
+    private void fillBoxWithCats(ArrayList<Category> filteredCats){
         if (filteredCats != null) {
             filteredCats.forEach(cat -> ListText.getItems().add(cat.getName()
                     + ": " + cat.getDescription()
@@ -179,7 +181,6 @@ public class CategoryManagement {
             alert.setTitle("INFO");
             alert.setHeaderText("Details");
             alert.setContentText(category.toString());
-
             alert.showAndWait();
         } else {
             somethingNotFoundErrorAlert("categories", "category");
@@ -281,7 +282,6 @@ public class CategoryManagement {
     }
 
     public void showIncome(ActionEvent actionEvent) {
-
         if (CategoryDataBaseManagement.getAllCategories().size() != 0) {
             String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
 
