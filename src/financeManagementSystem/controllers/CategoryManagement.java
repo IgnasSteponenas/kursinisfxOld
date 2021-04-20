@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,40 +70,38 @@ public class CategoryManagement {
         String[] responsible;
         ArrayList<Category> filteredCats = new ArrayList<Category>();
 
-        if(LoginPage.getIsItIndividual()){
-            if(UserDataBaseManagement.getResponsibleCategories(LoginPage.getIndividual().getId()) != null) {
+        if (LoginPage.getIsItIndividual()) {
+            if (UserDataBaseManagement.getResponsibleCategories(LoginPage.getIndividual().getId()) != null) {
                 responsible = UserDataBaseManagement.getResponsibleCategories(LoginPage.getIndividual().getId()).split(":");
-                for(Category cat: category){
-                    for (String res: responsible) {
-                        if (cat.getCatId()==Integer.parseInt(res)) {
+                for (Category cat : category) {
+                    for (String res : responsible) {
+                        if (cat.getCatId() == Integer.parseInt(res)) {
                             filteredCats.add(cat);
                             //break;
                         }
                     }
                 }
             }
-        }else
-            if(UserDataBaseManagement.getResponsibleCategories(LoginPage.getCompany().getId()) != null) {
-                responsible = UserDataBaseManagement.getResponsibleCategories(LoginPage.getCompany().getId()).split(":");
-                for(Category cat: category){
-                    for (String res: responsible) {
-                        if (cat.getCatId()==Integer.parseInt(res)) {
-                            filteredCats.add(cat);
-                            //break;
-                        }
+        } else if (UserDataBaseManagement.getResponsibleCategories(LoginPage.getCompany().getId()) != null) {
+            responsible = UserDataBaseManagement.getResponsibleCategories(LoginPage.getCompany().getId()).split(":");
+            for (Category cat : category) {
+                for (String res : responsible) {
+                    if (cat.getCatId() == Integer.parseInt(res)) {
+                        filteredCats.add(cat);
+                        //break;
                     }
                 }
             }
-
+        }
 
         if (filteredCats != null) {
-            filteredCats.forEach(cat-> ListText.getItems().add(cat.getName()
+            filteredCats.forEach(cat -> ListText.getItems().add(cat.getName()
                     + ": " + cat.getDescription()
                     + ": " + cat.getCatId()));
         }
     }
 
-    public void addResponsibleUser(){
+    public void addResponsibleUser() {
         String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
 
         TextInputDialog dialog = new TextInputDialog("");
@@ -113,15 +110,13 @@ public class CategoryManagement {
         dialog.setContentText("Please enter user id:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()){
+        if (result.isPresent()) {
             UserDataBaseManagement.addResponsibleCategories(Integer.parseInt(result.get()), Integer.parseInt(catData[2]));
         }
     }
 
     public void updateCatFunc(ActionEvent actionEvent) {
         String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
-        //Category category = fms.getAllCategories().stream().filter(c -> c.getName().equals(catData[0])).findFirst().orElse(null);
-        Category category = CategoryDataBaseManagement.getCategoryById(catData[2]);//id
 
         List<String> choices = new ArrayList<>();
         choices.add("Name");
@@ -129,16 +124,14 @@ public class CategoryManagement {
 
         ChoiceDialog<String> dialog1 = new ChoiceDialog<>("Name", choices);
         dialog1.setTitle("Choice Dialog");
-        dialog1.setHeaderText("Look, a Choice Dialog");
+        dialog1.setHeaderText("Choose what you want to update");
         dialog1.setContentText("Choose your option:");
 
         Optional<String> result1 = dialog1.showAndWait();
         if (result1.isPresent()) {
             if (result1.get().equals("Name")) {
                 TextInputDialog dialog = new TextInputDialog("Name");
-                dialog.setTitle("Text Input Dialog");
-                dialog.setHeaderText("Look, a Text Input Dialog");
-                dialog.setContentText("Please enter your name:");
+                catDetailUpdateBoxText(dialog, "name");
 
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()) {
@@ -147,9 +140,7 @@ public class CategoryManagement {
 
             } else if (result1.get().equals("Description")) {
                 TextInputDialog dialog2 = new TextInputDialog("Description");
-                dialog2.setTitle("Text Input Dialog");
-                dialog2.setHeaderText("Look, a Text Input Dialog");
-                dialog2.setContentText("Please enter your Description:");
+                catDetailUpdateBoxText(dialog2, "description");
 
                 Optional<String> result = dialog2.showAndWait();
                 if (result.isPresent()) {
@@ -158,17 +149,24 @@ public class CategoryManagement {
             }
         }
 
-        if(ListText.getSelectionModel().getSelectedItem().equals(null)) {
+        if (ListText.getSelectionModel().getSelectedItem().equals(null))
+            somethingNotFoundErrorAlert("categories", "category");
 
-            Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-            alert1.setTitle("Error");
-            alert1.setHeaderText("No categories found!");
-            alert1.setContentText("Add at least one category");
-
-            alert1.showAndWait();
-
-        }
         fillCatWithData();
+    }
+
+    private void somethingNotFoundErrorAlert(String pluralWord, String singularWord) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Error");
+        alert.setHeaderText("No " + pluralWord + " found!");
+        alert.setContentText("Add at least one " + singularWord);
+        alert.showAndWait();
+    }
+
+    private void catDetailUpdateBoxText(TextInputDialog dialog, String whatToUpdate) {
+        dialog.setTitle("Text Input Dialog");
+        dialog.setHeaderText("Input the " + whatToUpdate + " you want");
+        dialog.setContentText("Please enter your Description:");
     }
 
     public void showCatFunc(ActionEvent actionEvent) {
@@ -184,29 +182,20 @@ public class CategoryManagement {
 
             alert.showAndWait();
         } else {
-            Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-            alert1.setTitle("Error");
-            alert1.setHeaderText("No categories found!");
-            alert1.setContentText("Add at least one category");
-
-            alert1.showAndWait();
+            somethingNotFoundErrorAlert("categories", "category");
         }
     }
 
     public void deleteCat(ActionEvent actionEvent) {
         if (CategoryDataBaseManagement.getAllCategories().size() == 0) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("No categories found!");
-            alert.setContentText("Add at least one category");
-            alert.showAndWait();
+            somethingNotFoundErrorAlert("categories", "category");
         } else {
             String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
             CategoryDataBaseManagement.deleteCategory(Integer.parseInt(catData[2]));
             ExpenseDB.deleteExpenseByCatId(Integer.parseInt(catData[2]));
             IncomeDB.deleteIncomeByCatId(Integer.parseInt(catData[2]));
 
-            if(LoginPage.getIsItIndividual())
+            if (LoginPage.getIsItIndividual())
                 UserDataBaseManagement.removeResponsibleCategories(LoginPage.getIndividual().getId(), Integer.parseInt(catData[2]));
             else
                 UserDataBaseManagement.removeResponsibleCategories(LoginPage.getCompany().getId(), Integer.parseInt(catData[2]));
@@ -218,42 +207,44 @@ public class CategoryManagement {
 
         String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
 
-        TextInputDialog dialog = new TextInputDialog("Name");
-        TextInputDialog dialo = new TextInputDialog("Description");
-        TextInputDialog dial = new TextInputDialog("cost");
-        dialog.setTitle("Income");
-        dialog.setHeaderText("Add Income");
-        dialog.setContentText("Please insert name:");
-        dialo.setContentText("Please insert description:");
-        dial.setContentText("Please insert amount:");
-
-        Optional<String> result = dialog.showAndWait();
-        Optional<String> resul = dialo.showAndWait();
-        Optional<String> resu = dial.showAndWait();
+        ArrayList<Optional<String>> dialog = income_expenseDialog("Income");
 
         String name = null;
         String desc = null;
         double cost = 0;
-        if (result.isPresent()) {
-            name = result.get();
-        }
-        if (resul.isPresent()) {
-            desc = resul.get();
-        }
-        if (resu.isPresent()) {
-            cost = Float.parseFloat(resu.get());
-        }
 
+        if (dialog.get(0).isPresent())
+            name = dialog.get(0).get();
 
-        if (name.equals(null) || desc.equals(null) || cost == 0) {
+        if (dialog.get(1).isPresent())
+            desc = dialog.get(1).get();
 
-        } else {
+        if (dialog.get(2).isPresent())
+            cost = Float.parseFloat(dialog.get(2).get());
+
+        if (!name.equals(null) && !desc.equals(null) && cost !=0) {
             Income income = new Income(name, desc, cost, LocalDate.now(), IncomeDB.getIncomeIdCount(), Integer.parseInt(catData[2]));
             IncomeDB.addIncome(income);
             IncomeDB.addIncomeIdCount();
         }
+    }
 
+    private ArrayList<Optional<String>> income_expenseDialog(String incomeOrExpense){
+        TextInputDialog name = new TextInputDialog("Name");
+        TextInputDialog desc = new TextInputDialog("Description");
+        TextInputDialog cost = new TextInputDialog("cost");
+        name.setTitle(incomeOrExpense);
+        name.setHeaderText("Add " + incomeOrExpense);
+        name.setContentText("Please insert name:");
+        desc.setContentText("Please insert description:");
+        cost.setContentText("Please insert amount:");
 
+        ArrayList <Optional<String>> result = new ArrayList<>();
+        result.add(name.showAndWait());
+        result.add(desc.showAndWait());
+        result.add(cost.showAndWait());
+
+        return result;
     }
 
     public void exit(ActionEvent actionEvent) throws IOException {
@@ -293,7 +284,6 @@ public class CategoryManagement {
 
         if (CategoryDataBaseManagement.getAllCategories().size() != 0) {
             String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
-            //Category category = CategoryDataBaseManagement.getCategoryById(catData[2]);//id
 
             ArrayList<Income> income = IncomeDB.findAllIncome(Integer.parseInt(catData[2]));
 
@@ -301,25 +291,13 @@ public class CategoryManagement {
             alert.setTitle("INFO");
             alert.setHeaderText("Details");
             if (income.size() != 0) {
-                //ArrayList<String> temp = income.forEach(inc -> income.toString());
                 alert.setContentText(income.toString());
                 alert.showAndWait();
-            }
-            else{
-                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-                alert1.setTitle("Error");
-                alert1.setHeaderText("No income found!");
-                alert1.setContentText("Add at least one income report");
-
-                alert1.showAndWait();
+            } else {
+                somethingNotFoundErrorAlert("incomes", "income");
             }
         } else {
-            Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-            alert1.setTitle("Error");
-            alert1.setHeaderText("No categories found!");
-            alert1.setContentText("Add at least one category");
-
-            alert1.showAndWait();
+            somethingNotFoundErrorAlert("categories", "category");
         }
     }
 
@@ -327,36 +305,22 @@ public class CategoryManagement {
 
         String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
 
-        TextInputDialog dialog = new TextInputDialog("Name");
-        TextInputDialog dialo = new TextInputDialog("Description");
-        TextInputDialog dial = new TextInputDialog("cost");
-        dialog.setTitle("Expense");
-        dialog.setHeaderText("Add Expense");
-        dialog.setContentText("Please insert name:");
-        dialo.setContentText("Please insert description:");
-        dial.setContentText("Please insert amount:");
-
-        Optional<String> result = dialog.showAndWait();
-        Optional<String> resul = dialo.showAndWait();
-        Optional<String> resu = dial.showAndWait();
+        ArrayList<Optional<String>> dialog = income_expenseDialog("Expense");
 
         String name = null;
         String desc = null;
         double cost = 0;
-        if (result.isPresent()) {
-            name = result.get();
-        }
-        if (resul.isPresent()) {
-            desc = resul.get();
-        }
-        if (resu.isPresent()) {
-            cost = Float.parseFloat(resu.get());
-        }
 
+        if (dialog.get(0).isPresent())
+            name = dialog.get(0).get();
 
-        if (name.equals(null) || desc.equals(null) || cost == 0) {
+        if (dialog.get(1).isPresent())
+            desc = dialog.get(1).get();
 
-        } else {
+        if (dialog.get(2).isPresent())
+            cost = Float.parseFloat(dialog.get(2).get());
+
+        if (!name.equals(null) && !desc.equals(null) && cost !=0) {
             Expense expense = new Expense(name, desc, cost, LocalDate.now(), ExpenseDB.getExpenseIdCount(), Integer.parseInt(catData[2]));
             ExpenseDB.addExpense(expense);
             ExpenseDB.addExpenseIdCount();
@@ -367,7 +331,6 @@ public class CategoryManagement {
 
         if (CategoryDataBaseManagement.getAllCategories().size() != 0) {
             String[] catData = ListText.getSelectionModel().getSelectedItem().toString().split(": ");
-            //Category category = CategoryDataBaseManagement.getCategoryById(catData[2]);//id
 
             ArrayList<Expense> expense = ExpenseDB.findAllExpense(Integer.parseInt(catData[2]));
 
@@ -375,25 +338,13 @@ public class CategoryManagement {
             alert.setTitle("INFO");
             alert.setHeaderText("Details");
             if (expense.size() != 0) {
-                //ArrayList<String> temp = income.forEach(inc -> income.toString());
                 alert.setContentText(expense.toString());
                 alert.showAndWait();
-            }
-            else{
-                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-                alert1.setTitle("Error");
-                alert1.setHeaderText("No expenses found!");
-                alert1.setContentText("Add at least one expense report");
-
-                alert1.showAndWait();
+            } else {
+                somethingNotFoundErrorAlert("expenses", "expense");
             }
         } else {
-            Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-            alert1.setTitle("Error");
-            alert1.setHeaderText("No categories found!");
-            alert1.setContentText("Add at least one category");
-
-            alert1.showAndWait();
+            somethingNotFoundErrorAlert("categories", "category");
         }
     }
 }
