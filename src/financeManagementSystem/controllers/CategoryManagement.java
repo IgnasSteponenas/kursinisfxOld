@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class CategoryManagement {
@@ -55,13 +56,11 @@ public class CategoryManagement {
         addCategory.setFms(fms);
 
         Stage stage = (Stage) addCatBtn.getScene().getWindow();
-
         stage.setTitle("Finance Management System");
         stage.setScene(new Scene(root));
         stage.show();
         fillCatWithData();
     }
-
 
     public void fillCatWithData() {
         ListText.getItems().clear();
@@ -83,8 +82,9 @@ public class CategoryManagement {
         fillBoxWithCats(filteredCats);
     }
 
-    private ArrayList<Category> filterCats(ArrayList<Category> category, String[] responsible){
+    private ArrayList<Category> filterCats(ArrayList<Category> category, String[] responsible) {
         ArrayList<Category> filteredCats = new ArrayList<Category>();
+
         for (Category cat : category) {
             for (String res : responsible) {
                 if (cat.getCatId() == Integer.parseInt(res)) {
@@ -92,10 +92,11 @@ public class CategoryManagement {
                 }
             }
         }
+
         return filteredCats;
     }
 
-    private void fillBoxWithCats(ArrayList<Category> filteredCats){
+    private void fillBoxWithCats(ArrayList<Category> filteredCats) {
         if (filteredCats != null) {
             filteredCats.forEach(cat -> ListText.getItems().add(cat.getName()
                     + ": " + cat.getDescription()
@@ -108,7 +109,7 @@ public class CategoryManagement {
 
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("Add responsible user");
-        dialog.setHeaderText("Look, a Text Input Dialog");
+        dialog.setHeaderText("Add responsible user");
         dialog.setContentText("Please enter user id:");
 
         Optional<String> result = dialog.showAndWait();
@@ -124,38 +125,27 @@ public class CategoryManagement {
         choices.add("Name");
         choices.add("Description");
 
-        ChoiceDialog<String> dialog1 = new ChoiceDialog<>("Name", choices);
-        dialog1.setTitle("Choice Dialog");
-        dialog1.setHeaderText("Choose what you want to update");
-        dialog1.setContentText("Choose your option:");
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("Name", choices);
+        dialog.setTitle("Update category");
+        dialog.setHeaderText("Choose what you want to update");
+        Optional<String> result = dialog.showAndWait();
 
-        Optional<String> result1 = dialog1.showAndWait();
-        if (result1.isPresent()) {
-            if (result1.get().equals("Name")) {
-                TextInputDialog dialog = new TextInputDialog("Name");
-                catDetailUpdateBoxText(dialog, "name");
-
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    CategoryDataBaseManagement.updateCategoryName(result.get(), catData[2]);
-                }
-
-            } else if (result1.get().equals("Description")) {
-                TextInputDialog dialog2 = new TextInputDialog("Description");
-                catDetailUpdateBoxText(dialog2, "description");
-
-                Optional<String> result = dialog2.showAndWait();
-                if (result.isPresent()) {
-                    CategoryDataBaseManagement.updateCategoryDescription(result.get(), catData[2]);
-                }
-            }
-        }
-
-        if (ListText.getSelectionModel().getSelectedItem().equals(null))
-            somethingNotFoundErrorAlert("categories", "category");
+        changeCatInfo(catData[2], result.get());
 
         fillCatWithData();
     }
+
+    private void changeCatInfo(String catId, String whatToChange) {
+        TextInputDialog dialog = new TextInputDialog(whatToChange.substring(0, 1).toUpperCase() + whatToChange.substring(1).toLowerCase());
+        catDetailUpdateBoxText(dialog, whatToChange.toLowerCase(Locale.ROOT));
+
+        Optional<String> result = dialog.showAndWait();
+        if (whatToChange.toLowerCase(Locale.ROOT).equals("name") && result.isPresent()) {
+            CategoryDataBaseManagement.updateCategoryName(result.get(), catId);
+        } else
+            CategoryDataBaseManagement.updateCategoryDescription(result.get(), catId);
+    }
+
 
     private void somethingNotFoundErrorAlert(String pluralWord, String singularWord) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -223,14 +213,14 @@ public class CategoryManagement {
         if (dialog.get(2).isPresent())
             cost = Float.parseFloat(dialog.get(2).get());
 
-        if (!name.equals(null) && !desc.equals(null) && cost !=0) {
+        if (!name.equals(null) && !desc.equals(null) && cost != 0) {
             Income income = new Income(name, desc, cost, LocalDate.now(), IncomeDB.getIncomeIdCount(), Integer.parseInt(catData[2]));
             IncomeDB.addIncome(income);
             IncomeDB.addIncomeIdCount();
         }
     }
 
-    private ArrayList<Optional<String>> income_expenseDialog(String incomeOrExpense){
+    private ArrayList<Optional<String>> income_expenseDialog(String incomeOrExpense) {
         TextInputDialog name = new TextInputDialog("Name");
         TextInputDialog desc = new TextInputDialog("Description");
         TextInputDialog cost = new TextInputDialog("cost");
@@ -240,7 +230,7 @@ public class CategoryManagement {
         desc.setContentText("Please insert description:");
         cost.setContentText("Please insert amount:");
 
-        ArrayList <Optional<String>> result = new ArrayList<>();
+        ArrayList<Optional<String>> result = new ArrayList<>();
         result.add(name.showAndWait());
         result.add(desc.showAndWait());
         result.add(cost.showAndWait());
@@ -320,7 +310,7 @@ public class CategoryManagement {
         if (dialog.get(2).isPresent())
             cost = Float.parseFloat(dialog.get(2).get());
 
-        if (!name.equals(null) && !desc.equals(null) && cost !=0) {
+        if (!name.equals(null) && !desc.equals(null) && cost != 0) {
             Expense expense = new Expense(name, desc, cost, LocalDate.now(), ExpenseDB.getExpenseIdCount(), Integer.parseInt(catData[2]));
             ExpenseDB.addExpense(expense);
             ExpenseDB.addExpenseIdCount();
