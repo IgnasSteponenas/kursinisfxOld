@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="tryhard:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/tryhard_Web_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="tryhard/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="tryhard" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="mysql:mysql-connector-java:8.0.21" />
+          <element id="library" level="project" name="com.google.code.gson:gson:2.8.6" />
+          <element id="library" level="project" name="Spring-5.2.3.RELEASE" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
