@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="financeManagementSystem.controllers.LoginPage">
+    <children>
+        <Label layoutX="82.0" layoutY="61.0" text="Login" />
+        <Label layoutX="82.0" layoutY="102.0" text="Password" />
+        <PasswordField fx:id="password" layoutX="82.0" layoutY="119.0" />
+        <TextField fx:id="login" layoutX="82.0" layoutY="78.0" />
+        <Button fx:id="signinButton" layoutX="80.0" layoutY="209.0" mnemonicParsing="false" onAction="#LoginFunction" text="Sign In" />
+      <ChoiceBox fx:id="choicebox1" layoutX="82.0" layoutY="169.0" prefWidth="150.0" />
+      <Label layoutX="370.0" layoutY="57.0" text="Name" />
+      <TextField fx:id="regName" layoutX="370.0" layoutY="74.0" />
+      <Label layoutX="370.0" layoutY="103.0" text="Surname" />
+      <TextField fx:id="regSurname" layoutX="370.0" layoutY="120.0" />
+      <Label layoutX="370.0" layoutY="148.0" text="Phone Number" />
+      <TextField fx:id="regPhone" layoutX="370.0" layoutY="165.0" />
+      <Label layoutX="370.0" layoutY="194.0" text="Email" />
+      <TextField fx:id="regEmail" layoutX="370.0" layoutY="211.0" />
+      <Label layoutX="370.0" layoutY="236.0" text="Login" />
+      <TextField fx:id="regLogin" layoutX="370.0" layoutY="253.0" />
+      <Label layoutX="370.0" layoutY="282.0" text="Password" />
+      <TextField fx:id="regPass" layoutX="370.0" layoutY="299.0" />
+      <Button fx:id="registerBtn" layoutX="370.0" layoutY="335.0" mnemonicParsing="false" onAction="#registerFunction" text="Register" />
+      <ChoiceBox fx:id="regChoisebox" layoutX="370.0" layoutY="32.0" prefWidth="150.0" />
+    </children>
+</AnchorPane>
