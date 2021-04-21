@@ -3,6 +3,7 @@ package financeManagementSystem.controllers;
 import financeManagementSystem.model.Category;
 import financeManagementSystem.model.FinanceManagementSystem;
 import financeManagementSystem.utils.CategoryDataBaseManagement;
+import financeManagementSystem.utils.Jdbc;
 import financeManagementSystem.utils.UserDataBaseManagement;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 
 public class AddSubCategory {

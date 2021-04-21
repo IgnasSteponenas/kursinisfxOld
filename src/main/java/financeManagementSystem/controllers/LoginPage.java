@@ -1,8 +1,12 @@
 package financeManagementSystem.controllers;
 
+import com.sun.javafx.scene.control.skin.ChoiceBoxSkin;
 import financeManagementSystem.model.Company;
 import financeManagementSystem.model.FinanceManagementSystem;
 import financeManagementSystem.model.Individual;
+import financeManagementSystem.utils.CategoryDataBaseManagement;
+import financeManagementSystem.utils.DataRW;
+import financeManagementSystem.utils.Jdbc;
 import financeManagementSystem.utils.UserDataBaseManagement;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,8 +17,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -221,44 +221,54 @@ public class UserDataBaseManagement {
         {
             responsible = responsible + ":" + categoryToAddId;
         }
-        updateResponsibleForCategories(responsible, userId);
+        try {
+            connection = Jdbc.connectToDb();
+
+            String updateString = "update users set responsibleForCategories = ? where ID = ?";
+            PreparedStatement updateCat = connection.prepareStatement(updateString);
+            updateCat.setString(1, responsible);
+            updateCat.setInt(2, userId);
+            updateCat.executeUpdate();
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        Jdbc.disconnectFromDb(connection, statement);
     }
 
     public static void removeResponsibleCategories(int userId, int categoryToDeleteFromId){
+        Connection connection = null;
+        Statement statement = null;
+
         String[] responsible = UserDataBaseManagement.getResponsibleCategories(userId).split(":");
-        String result;
+        String result = null;
 
         if(responsible.length==1){
             result = "null";
         }else{
-            result = getResponsibleUsersListAfterDeletion(responsible, categoryToDeleteFromId, null);
-        }
-        updateResponsibleForCategories(result, userId);
-    }
-
-    private static String getResponsibleUsersListAfterDeletion(String[] responsible, int categoryToDeleteFromId, String result){
-        boolean worked = false;
-        int i=0;
-        for (int j=0; j<responsible.length; j++) {
-            if (!responsible[j].equals(String.valueOf(categoryToDeleteFromId))) {
-                if(worked) {
-                    result = result + ":" + responsible[j];
-                    i++;
-                }else{
-                    result = responsible[j];
-                    i++;
-                    worked = true;
+            boolean worked = false;
+            int i=0;
+            for (int j=0; j<responsible.length; j++) {
+                if (!responsible[j].equals(String.valueOf(categoryToDeleteFromId))) {
+                    if(worked) {
+                        result = result + ":" + responsible[j];
+                        i++;
+                    }else{
+                        result = responsible[j];
+                        i++;
+                        worked = true;
+                    }
                 }
             }
         }
-        return result;
-    }
 
-    private static void updateResponsibleForCategories(String result, int userId){
-        Connection connection = null;
-        Statement statement = null;
         try {
             connection = Jdbc.connectToDb();
+
+
+
             String updateString = "update users set responsibleForCategories = ? where ID = ?";
             PreparedStatement updateCat = connection.prepareStatement(updateString);
             updateCat.setString(1, result);
