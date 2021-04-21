@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="financeManagementSystem.controllers.AddCategory">
+   <children>
+      <TextField fx:id="catName" layoutX="196.0" layoutY="31.0" />
+      <Label layoutX="196.0" layoutY="14.0" text="Category name" />
+      <Label layoutX="196.0" layoutY="78.0" text="Category description" />
+      <TextArea fx:id="catDescription" layoutX="195.0" layoutY="100.0" prefHeight="244.0" prefWidth="200.0" />
+      <Button fx:id="addCat" layoutX="226.0" layoutY="361.0" mnemonicParsing="false" onAction="#addCategory" text="Add" />
+      <Button fx:id="cancel" layoutX="326.0" layoutY="361.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
+   </children>
+</AnchorPane>
